@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>jQuery Select Narrowing</title>
+    <script src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="jquery.narrows.js"></script>
+    <script type="text/javascript">
+    $(function () {
+        // 例１：親→子
+        $("#example1>select.food-category").narrows("#example1>select.food-item");
+
+        // 例２：親→子→孫
+        $("#example2>select.continent").narrows("#example2>select.country");
+        $("#example2>select.country").narrows("#example2>select.city");
+
+        // 例３：親→子１、親→子２
+        $("#example3>select.cuisine").narrows("#example3>select.food");
+        $("#example3>select.cuisine").narrows("#example3>select.alcohol");
+    });
+    </script>
+  </head>
+  <body>
+
+    <h1>例１</h1>
+    <section id="example1">
+      <p>基本的な「親→子」の例</p>
+      <select class="food-category">
+        <option value="">-- Food Category --</option>
+        <option value="meat">Meat</option>
+        <option value="vegetable">Vegetable</option>
+        <option value="fruit">Fruit</option>
+      </select>
+      <select class="food-item">
+        <option value="">-- Food --</option>
+        <option value="beef" data-parent-value="meat">Beef</option>
+        <option value="pork" data-parent-value="meat">Pork</option>
+        <option value="chicken" data-parent-value="meat">Chicken</option>
+        <option value="lettuce" data-parent-value="vegetable">Lettuce</option>
+        <option value="carrot" data-parent-value="vegetable">Carrot</option>
+        <option value="tomato" data-parent-value="vegetable">Tomato</option>
+        <option value="apple" data-parent-value="fruit">Apple</option>
+        <option value="banana" data-parent-value="fruit">Banana</option>
+        <option value="melon" data-parent-value="fruit">Melon</option>
+      </select>
+    </section>
+
+    <h1>例２</h1>
+    <section id="example2">
+      <p>「親→子→孫」の３世代の例</p>
+      <select class="continent">
+        <option value="">-- Continent --</option>
+        <option value="africa">Africa</option>
+        <option value="asia">Asia</option>
+        <option value="europa">Europa</option>
+        <option value="oceania">Oceania</option>
+        <option value="north-america">North America</option>
+        <option value="south-america">South America</option>
+      </select>
+      <select class="country">
+        <option value="">-- Country --</option>
+        <option value="south-africa" data-parent-value="africa">South Africa</option>
+        <option value="egypt" data-parent-value="africa">Egypt</option>
+        <option value="kenia" data-parent-value="africa">Kenia</option>
+        <option value="japan" data-parent-value="asia">Japan</option>
+        <option value="korea" data-parent-value="asia">Korea</option>
+        <option value="china" data-parent-value="asia">China</option>
+        <option value="taiwan" data-parent-value="asia">Taiwan</option>
+        <option value="vietnam" data-parent-value="asia">Vietnam</option>
+        <option value="thailand" data-parent-value="asia">Thailand</option>
+        <option value="cambodia" data-parent-value="asia">Cambodia</option>
+        <option value="laos" data-parent-value="asia">Laos</option>
+        <option value="malaysia" data-parent-value="asia">Malaysia</option>
+        <option value="singapore" data-parent-value="asia">Singapore</option>
+        <option value="indonesia" data-parent-value="asia">Indonesia</option>
+        <option value="philippines" data-parent-value="asia">Philippines</option>
+        <option value="uk" data-parent-value="europa">UK</option>
+        <option value="spain" data-parent-value="europa">Spain</option>
+        <option value="france" data-parent-value="europa">France</option>
+        <option value="german" data-parent-value="europa">German</option>
+        <option value="italia" data-parent-value="europa">Italia</option>
+        <option value="rosia" data-parent-value="europa">Rosia</option>
+        <option value="australia" data-parent-value="oceania">Australia</option>
+        <option value="new zealand" data-parent-value="oceania">New Zealand</option>
+        <option value="fiji" data-parent-value="oceania">Fiji</option>
+        <option value="usa" data-parent-value="north-america">USA</option>
+        <option value="canada" data-parent-value="north-america">Canada</option>
+        <option value="mexico" data-parent-value="north-america">Mexico</option>
+        <option value="brasil" data-parent-value="south-america">Brasil</option>
+        <option value="argentina" data-parent-value="south-america">Argentina</option>
+        <option value="colombia" data-parent-value="south-america">Colombia</option>
+      </select>
+      <select class="city">
+        <option value="">-- City --</option>
+        <option value="cape-town" data-parent-value="south-africa">Cape Town</option>
+        <option value="giza" data-parent-value="egypt">Giza</option>
+        <option value="nairobi" data-parent-value="kenia">Nairobi</option>
+        <option value="tokyo" data-parent-value="japan">Tokyo</option>
+        <option value="osaka" data-parent-value="japan">Osaka</option>
+        <option value="hokkaido" data-parent-value="japan">Hokkaido</option>
+        <option value="peking" data-parent-value="china">Peking</option>
+        <option value="seoul" data-parent-value="korea">Seoul</option>
+        <option value="taipei" data-parent-value="taiwan">Taipei</option>
+        <option value="bangkok" data-parent-value="thailand">Bangkok</option>
+        <option value="jakarta" data-parent-value="indonesia">Jakarta</option>
+        <option value="bali" data-parent-value="indonesia">Bali</option>
+        <option value="london" data-parent-value="uk">London</option>
+        <option value="madrid" data-parent-value="spain">Madrid</option>
+        <option value="paris" data-parent-value="france">Paris</option>
+        <option value="berlin" data-parent-value="german">Berlin</option>
+        <option value="roma" data-parent-value="italia">Roma</option>
+        <option value="canberra" data-parent-value="australia">Canberra</option>
+        <option value="wellington" data-parent-value="new zealand">Wellington</option>
+        <option value="suva" data-parent-value="fiji">Suva</option>
+        <option value="boston" data-parent-value="usa">Boston</option>
+        <option value="new york" data-parent-value="usa">New York</option>
+        <option value="california" data-parent-value="usa">California</option>
+        <option value="otawa" data-parent-value="canada">Otawa</option>
+        <option value="mexico city" data-parent-value="mexico">Mexico City</option>
+        <option value="brasilia" data-parent-value="brasil">Brasilia</option>
+        <option value="buenos aires" data-parent-value="argentina">Buenos Aires</option>
+        <option value="bogota" data-parent-value="colombia">Bogota</option>
+      </select>
+    </section>
+
+    <h1>例３</h1>
+    <section id="example3">
+      <p>１つの親が複数の子を持つ例</p>
+      <select class="cuisine">
+        <option value="">-- Cuisine --</option>
+        <option value="japanese">Japanese</option>
+        <option value="chinese">Chinese</option>
+        <option value="korean">Korean</option>
+      </select>
+      <select class="food">
+        <option value="">-- Food --</option>
+        <option value="sushi" data-parent-value="japanese">Sushi</option>
+        <option value="tempura" data-parent-value="japanese">Tempura</option>
+        <option value="soba-noodle" data-parent-value="japanese">Soba Noodle</option>
+        <option value="stir-fried-rice" data-parent-value="chinese">Stir-fried Rice</option>
+        <option value="twice-cooked-pork" data-parent-value="chinese">Twice Cooked Pork</option>
+        <option value="dumpling" data-parent-value="chinese">Dumpling</option>
+        <option value="bulgogi" data-parent-value="korean">Bulgogi</option>
+        <option value="bibimbap" data-parent-value="korean">Bibimbap</option>
+        <option value="kimchi" data-parent-value="korean">Kimchi</option>
+      </select>
+      <select class="alcohol">
+        <option value="">-- Alcohol --</option>
+        <option value="sake" data-parent-value="japanese">Sake</option>
+        <option value="asahi-beer" data-parent-value="japanese">Asahi Beer</option>
+        <option value="kirin-beer" data-parent-value="japanese">Kirin Beer</option>
+        <option value="sapporo-beer" data-parent-value="japanese">Sapporo Beer</option>
+        <option value="ebisu-beer" data-parent-value="japanese">Ebisu Beer</option>
+        <option value="huangjiu" data-parent-value="chinese">Huangjiu</option>
+        <option value="baijiu" data-parent-value="chinese">Baijiu</option>
+        <option value="tsingtao-beer" data-parent-value="chinese">Tsingtao Beer</option>
+        <option value="soju" data-parent-value="korean">Soju</option>
+        <option value="makgeolli" data-parent-value="korean">Makgeolli</option>
+        <option value="hite-jinro-beer" data-parent-value="korean">Hite-Jinro Beer</option>
+      </select>
+    </section>
+
+  </body>
+</html>
