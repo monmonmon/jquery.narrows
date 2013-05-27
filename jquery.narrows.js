@@ -6,19 +6,19 @@
 // 親selectは複数の子selectを持てまする
 (function ($) {
     var methods = {
-        relations: [],
-        //parent_value_key: 'value',
-        init: function (selector, parent_value_key) {
+        INIT_EVENT: 'init',     // 親子関係初期化用イベント名
+        relations: [],          // 親子関係を保持する配列
+        init: function (selector, params) {
             $child = $(selector);
             // 引数チェック
             methods.check_parameters(this, $child);
             // この親子関係を登録
-            methods.add_new_relations(this, $child, parent_value_key);
+            methods.add_new_relations(this, $child, params);
             // 子selectはとりあえずdisable（条件次第でenable）
             $child.attr('disabled', 'disabled');
             // 親selectのchangeイベントハンドラを設定
-            this.on('change', methods.change_event_handler)
-                .trigger('change'); // 初期化のためイベント１発目を発生
+            this.on('change '+methods.INIT_EVENT, methods.event_handler)
+                .trigger(methods.INIT_EVENT); // 初期化イベントをトリガー
             return this;
         },
         check_parameters: function ($parent, $child) {
@@ -33,7 +33,14 @@
             if ('SELECT' != $child[0].tagName)
                 $.error('the child element is not a select element');
         },
-        add_new_relations: function ($parent, $child, parent_value_key) {
+        add_new_relations: function ($parent, $child, params) {
+            // デフォルトパラメータ
+            var defaults = {
+                parent_value_key: 'value', // 参照する親の属性
+            };
+            for (var key in defaults) {
+                if (!params[key]) params[key] = defaults[key];
+            }
             // 親子それぞれの select にランダムなユニークキーを生成して与える
             var key1 = $parent.data('narrowing-key');
             if (!key1) {
@@ -45,16 +52,15 @@
                 var key2 = methods.unique_key();
                 $child.data('narrowing-key', key2)
             }
-            // 参照する親の属性（デフォルト value）
-            parent_value_key = parent_value_key ? parent_value_key : 'value';
             // ユニークキーでこの親子関係を管理
             if (!methods.relations[key1])
                 methods.relations[key1] = [];
             methods.relations[key1][key2] = {
-                $parent:this,
+                $parent:$parent,
                 $child:$child,
-                parent_value_key:parent_value_key,
+                parent_value_key:params.parent_value_key,
                 options:$child.find('option').get(), // 子selectのoptionを配列で全部持つ
+                initialized:false,
             };
         },
         __unique_keys:[],
@@ -66,13 +72,16 @@
             methods.__unique_keys[key] = 1;
             return key;
         },
-        change_event_handler: function () {
+        event_handler: function (e) {
             // $parent で選択肢が変更された。
             var key1 = $(this).data('narrowing-key');
             var relations = methods.relations[key1];
             var index1 = $(this).prop('selectedIndex');
             for (var key2 in relations) {
                 var relation = relations[key2];
+                if (methods.INIT_EVENT == e.type && relation.initialized) {
+                    continue;
+                }
                 var parent_value = $(this).find('option:nth('+index1+')')
                     .attr(relation.parent_value_key);
                 if (!parent_value) {
@@ -83,7 +92,7 @@
                     relation.$child
                         .find('option[value!=""]').remove();
                 } else {
-                    // 親selectで値を選択したので子selectへ反映するよ。
+                    // 親selectで value="" でない値を選択したので子selectへ反映するよ。
                     // 子selectで現在選択されてんのをとっとく
                     var index2 = relation.$child.prop('selectedIndex');
                     var selected_child_option = relation.$child.find('option:nth('+index2+')');
@@ -109,8 +118,9 @@
                         }
                     }
                 }
-                // 子孫selectへも反映
-                relation.$child.trigger('change');
+                relation.initialized = true;
+                // 子孫selectへもイベントを伝播
+                relation.$child.trigger(e.type);
             }
         }
     };
