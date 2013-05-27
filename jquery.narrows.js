@@ -6,6 +6,10 @@
 // 親selectは複数の子selectを持てまする
 (function ($) {
     var methods = {
+        // デフォルトパラメータ
+        defaults: {
+            parent_value_key: 'value', // 参照する親の属性
+        },
         INIT_EVENT: 'init',     // 親子関係初期化用イベント名
         relations: [],          // 親子関係を保持する配列
         init: function (selector, params) {
@@ -34,12 +38,10 @@
                 $.error('the child element is not a select element');
         },
         add_new_relations: function ($parent, $child, params) {
-            // デフォルトパラメータ
-            var defaults = {
-                parent_value_key: 'value', // 参照する親の属性
-            };
-            for (var key in defaults) {
-                if (!params[key]) params[key] = defaults[key];
+            if (!params)
+                params = {};
+            for (var key in methods.defaults) {
+                if (!params[key]) params[key] = methods.defaults[key];
             }
             // 親子それぞれの select にランダムなユニークキーを生成して与える
             var key1 = $parent.data('narrowing-key');
