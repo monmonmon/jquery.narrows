@@ -4,7 +4,7 @@
 https://github.com/monmonmon/jquery.narrows
 -->
 
-# jQuery Select Narrowing Plugin（select 絞り込みプラグイン）
+# jQuery Select Narrowing Plugin<br>（select 絞り込みプラグイン）
 
 * Version: 0.2
 * Author: Shimon Yamada
@@ -16,7 +16,7 @@ https://github.com/monmonmon/jquery.narrows
 
 ## 例
 
-ぐだぐだ説明するよりまずサンプルを見て貰った方が分かりやすいかと思います。。。  
+ぐだぐだ説明するよりまずサンプルを触って貰った方が分かりやすいかと思います。。。  
 → [sample.html](http://monmonmon.github.io/jquery.narrows/sample.html)
 
 ## ウリ
@@ -27,24 +27,14 @@ https://github.com/monmonmon/jquery.narrows
 * 「親→子1＆子2」のように、1つの親 select に複数の子 select を持たせられます。
 * 「親1＆親2→子」のように、複数の親 select の選択結果により子 select の選択肢を絞り込んだり出来ます。  
 例えば select1 で色を、select2 で形をそれぞれ選択して、select3 の選択肢を絞り込んだりとか。
-* これらを組み合わせて、いくらでも複雑な階層関係を表現出来ます。出来るはず。あまり複雑な階層関係で実験したことはないですけど。。。
+* これらを組み合わせて、いくらでも複雑な階層関係を表現出来ます。出来るはず。あまり複雑な階層関係で実験したことないですけど。。。
 
 ## 制約
 
 * 使用する select（親selectも子selectも）は全て id 属性が必須です。
-* 子 select の option には独自のデータ属性 (data-xx="yy" のような属性) を持たせられること。
+* 子 select の option には独自のデータ属性 (data-xx="yy" のような属性) が必要です。
 * select の option を動的に追加・削除するようなコードやプラグインとは併用できないです。  
-  階層関係の初期化時に、子 select の option をメモリ中に全てキャッシュしてるためです。
-
-## 対応ブラウザ
-
-* Google Chrome 29+
-* Firefox 20+
-* Opera 12+
-* Safari 6+
-
-で動作確認。全て MacOSX 上でテストしています。  
-Windows では未テストです（笑）
+  階層関係の初期化時に、子 select の option 要素をメモリ中に全てキャッシュしてるためです。
 
 
 
@@ -185,6 +175,8 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
 		<option value="hite-jinro-beer" data-cuisine="korean">Hite-Jinro Beer</option>
 	</select>
 
+<!-- separator -->
+
 	<script type="text/javascript">
 	$(function () {
 		$("#cuisine").narrows("#food, #alcohol");	// cuisine は food, alcohol を同時に絞り込む
@@ -235,6 +227,8 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
 		<option value="sikhye"     data-country="korean"   data-category="soft-drink">Sikhye</option>
 	</select>
 
+<!-- separator -->
+
 	<script type="text/javascript">
 	$(function () {
 		$("#country, #category").narrows("#menu");		// country, category は menu を絞り込む
@@ -243,6 +237,17 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
 
 
 
+
+## 対応ブラウザ
+
+* Google Chrome 29+
+* Firefox 20+
+* Opera 12+
+* Safari 6+
+
+で動作確認。全て MacOSX 上でテストしています。  
+Windows では未テスト（笑）  
+そのうちやりますってば\_(:3｣∠)\_
 
 ## License
 
