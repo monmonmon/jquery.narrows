@@ -21,7 +21,7 @@ https://github.com/monmonmon/jquery.narrows
 
 ## ウリ
 
-* サーバサイドの実装なしに、JS と HTML だけで動作します。
+* サーバサイドの実装なしに、JS と HTML だけで動作します。サーバサイドが PHP だろうが Ruby だろうが Java だろうが関係なく動きます。素敵。
 * 単純な「親→子」だけでなく、「親→子→孫→ひ孫…」と、何階層でも連鎖させられます。  
 国→エリア→都市、とか。
 * 「親→子1＆子2」のように、1つの親 select に複数の子 select を持たせられます。
@@ -35,9 +35,6 @@ https://github.com/monmonmon/jquery.narrows
 * 子 select の option には独自のデータ属性 (data-xx="yy" のような属性) が必要です。
 * select の option を動的に追加・削除するようなコードやプラグインとは併用できないです。  
   階層関係の初期化時に、子 select の option 要素をメモリ中に全てキャッシュしてるためです。
-
-
-
 
 ## 使い方
 
