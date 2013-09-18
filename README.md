@@ -16,16 +16,16 @@ https://github.com/monmonmon/jquery.narrows
 
 ## 例
 
-ぐだぐだ説明するよりまずサンプルを触って貰った方が分かりやすいかと思います。。。  
+ぐだぐだ説明するよりまずサンプルを触って貰った方が分かりやすいかと思います。。。
 → [sample.html](http://monmonmon.github.io/jquery.narrows/sample.html)
 
 ## ウリ
 
 * サーバサイドの実装なしに、JS と HTML だけで動作します。サーバサイドが PHP だろうが Ruby だろうが Java だろうが関係なく動きます。素敵。
-* 単純な「親→子」だけでなく、「親→子→孫→ひ孫…」と、何階層でも連鎖させられます。  
+* 単純な「親→子」だけでなく、「親→子→孫→ひ孫…」と、何階層でも連鎖させられます。
 国→エリア→都市、とか。
 * 「親→子1＆子2」のように、1つの親 select に複数の子 select を持たせられます。
-* 「親1＆親2→子」のように、複数の親 select の選択結果により子 select の選択肢を絞り込んだり出来ます。  
+* 「親1＆親2→子」のように、複数の親 select の選択結果により子 select の選択肢を絞り込んだり出来ます。
 例えば select1 で色を、select2 で形をそれぞれ選択して、select3 の選択肢を絞り込んだりとか。
 * これらを組み合わせて、いくらでも複雑な階層関係を表現出来ます。出来るはず。あまり複雑な階層関係で実験したことないですけど。。。
 
@@ -33,7 +33,7 @@ https://github.com/monmonmon/jquery.narrows
 
 * 使用する select（親selectも子selectも）は全て id 属性が必須です。
 * 子 select の option には独自のデータ属性 (data-xx="yy" のような属性) が必要です。
-* select の option を動的に追加・削除するようなコードやプラグインとは併用できないです。  
+* select の option を動的に追加・削除するようなコードやプラグインとは併用できないです。
   階層関係の初期化時に、子 select の option 要素をメモリ中に全てキャッシュしてるためです。
 
 ## 使い方
@@ -42,14 +42,14 @@ https://github.com/monmonmon/jquery.narrows
 
 シンプルな例。
 
-まず HTML で select を記述します。この例では、食品カテゴリと食品の2つの select を作ります。  
-階層関係は、この select, option の HTML 属性で定義します。  
+まず HTML で select を記述します。この例では、食品カテゴリと食品の2つの select を作ります。
+階層関係は、この select, option の HTML 属性で定義します。
 
 * 親子とも、select 要素の id 属性は必須です。ここでは親 select を **"category"**, 子 select を **"food"** とします。
 * 子 select の option のデータ属性（**"data-xx"** てやつ）で、どの親 select のどの値で絞り込むか、を定義します。
     * データ属性名は **"data-<親 select の id 名>"** です。親 select の id は category なので、この場合のデータ属性名は **data-category** です。
     * このデータ属性は、子 select の value="" 以外の全ての option で必須です。
-    * このデータ属性の値で、親 select のどの値の時に有効となるかを定義します。  
+    * このデータ属性の値で、親 select のどの値の時に有効となるかを定義します。
       data-category="meat" なら、親 select で value="meat" が選択された時に有効になります。
 
 <!-- 箇条書きここまで -->
@@ -189,8 +189,8 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
 
 複数の親 select の選択結果により子 select を絞り込む例。
 
-国籍とカテゴリを選択すると、選んだ国、カテゴリに対応する食べ物が選択できるようになる。  
-親が複数の場合は、子 select の option に与えるデータ属性 **data-xx** が同じ数だけ必要になります。  
+国籍とカテゴリを選択すると、選んだ国、カテゴリに対応する食べ物が選択できるようになる。
+親が複数の場合は、子 select の option に与えるデータ属性 **data-xx** が同じ数だけ必要になります。
 この例では親 select は id-"country", id="category" なので、子 select の option には data-country, data-category の2つのデータ属性を与えます。
 
 	<!-- 親select1：国籍 -->
@@ -237,17 +237,22 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
 
 ## 対応ブラウザ
 
+MacOSX
+
 * Google Chrome 29+
 * Firefox 20+
 * Opera 12+
 * Safari 6+
 
-で動作確認。全て MacOSX 上でテストしています。  
-Windows では未テスト（笑）  
-そのうちやりますってば\_(:3｣∠)\_
+Windows
+
+* Internet Explorer 6
+* Firefox 10くらい
+
+で動作確認。
 
 ## License
 
-Dual licensed under the [MIT](http://www.opensource.org/licenses/MIT) and [GPL](http://www.gnu.org/licenses/gpl.html) licenses:
+Licensed under the [MIT](http://www.opensource.org/licenses/MIT) license.
 
 Copyright 2013 Shimon Yamada
