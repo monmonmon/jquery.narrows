@@ -1,6 +1,6 @@
 {
   "name": "jquery.narrows",
-  "version": "0.2",
+  "version": "0.0.2",
   "description": "jQuery Select Narrowing Plugin",
   "main": "jquery.narrows.js",
   "directories": {
@@ -26,6 +26,7 @@
   "devDependencies": {
     "grunt": "0.4.1",
     "grunt-contrib-watch": "0.5.3",
-    "grunt-contrib-uglify": "0.2.4"
+    "grunt-contrib-uglify": "0.2.4",
+    "grunt-contrib-jshint": "~0.6.4"
   }
 }

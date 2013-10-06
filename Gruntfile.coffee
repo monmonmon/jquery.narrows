@@ -5,12 +5,16 @@ module.exports = (grunt) ->
         uglify:
             files:
                 'jquery.narrows.min.js': 'jquery.narrows.js'
+        jshint:
+            files: ['jquery.narrows.js']
+            options:
+                jshintrc: ".jshintrc"
         watch:
             files: ['jquery.narrows.js'],
-            tasks: ['uglify']
+            tasks: ['uglify', 'jshint']
 
     for taskName of pkg.devDependencies
         if taskName.substring(0, 6) is 'grunt-'
             grunt.loadNpmTasks taskName
 
-    grunt.registerTask 'default', ['uglify', 'watch']
+    grunt.registerTask 'default', ['uglify', 'jshint', 'watch']
