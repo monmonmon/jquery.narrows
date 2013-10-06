@@ -35,10 +35,9 @@
         check_parameters: function ($parents, $children) {
             // 親子select共通のチェック
             var arr = [$parents, $children];
-            var parent_ids = [];
             for (var arr_i = 0, len = arr.length; arr_i < len; arr_i++) {
                 var $selects = arr[arr_i];
-                if (0 == $selects.size()) {
+                if (0 === $selects.size()) {
                     $.error('selector '+$selects.selector+': element not found');
                 }
                 $selects.each(function () {
@@ -72,7 +71,7 @@
             // 親子それぞれの select にランダムなユニークキーを割り当てる
             var parent_keys = [];
             $parents.each(function () {
-                var parent_key = methods.unique_key($(this))
+                var parent_key = methods.unique_key($(this));
                 parent_keys.push(parent_key);
             });
             var child_keys = [];
@@ -127,7 +126,8 @@
                 relation.$parents.each(function () {
                     var value = $(this).val();
                     if (!value) {
-                        return all_parents_selected = false;
+                        all_parents_selected = false;
+                        return false;
                     }
                     parent_selected_values[$(this).attr('id')] = value;
                 });
