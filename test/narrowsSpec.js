@@ -6,7 +6,7 @@ $(function () {
     describe('ex2', function() {
         var $continent, $country, $city;
 
-        // jquery instances
+        // jquery instances of the select elements
         $continent = $('#ex2-continent');
         $country = $('#ex2-country');
         $city = $('#ex2-city');
@@ -14,35 +14,37 @@ $(function () {
         // 各テストの最初に選択状態を初期化
         beforeEach(function() {
             $continent.val('').trigger('change');
+            $country.val('').trigger('change');
+            $city.val('').trigger('change');
         });
 
-        it('child & grand child selects should be disabled initially', function () {
+        it('country, city は初期状態で disabled', function () {
             expect($country.attr('disabled')).toBeTruthy();
             expect($city.attr('disabled')).toBeTruthy();
         });
 
-        it('child select should have been narrowed by a value "asia"', function () {
-            // select continent
+        it('continent で "asia" を選択したら country はアジアの国に絞り込まれる', function () {
+            // continent を選択
             $continent.val('asia').trigger('change');
-
+            // value="" を含め絞りこまれたoptionは2つ以上
+            expect($country.find('option').size()).toBeGreaterThan(1);
+            // option の data-xx 属性が全て "asia"
             $country.find('option').each(function () {
                 if ($(this).val()) {
                     expect($(this).data('ex2-continent')).toEqual('asia');
                 }
             });
+            // cityはdisabledのまま
             expect($city.attr('disabled')).toBeTruthy();
         });
 
-        it('grand child select should have been narrowed by continent "asia" and country "japan"', function () {
-            // select continent & country
+        it('continent で "asia", country で "japan" を選択したら city は日本の都市に絞り込まれる', function () {
+            // continent, country を選択
             $continent.val('asia').trigger('change');
             $country.val('japan').trigger('change');
-
-            $country.find('option').each(function () {
-                if ($(this).val()) {
-                    expect($(this).data('ex2-continent')).toEqual('asia');
-                }
-            });
+            // value="" を含め絞りこまれたoptionは2つ以上
+            expect($city.find('option').size()).toBeGreaterThan(1);
+            // option の data-xx 属性が全て "asia"
             $city.find('option').each(function () {
                 if ($(this).val()) {
                     expect($(this).data('ex2-country')).toEqual('japan');
@@ -50,13 +52,12 @@ $(function () {
             });
         });
 
-        it('both child & grand child selects should be disabled after selecting null value in the parent select', function () {
-            // select continent & country
+        it('continent で value="" を選択したら country, city は disabled', function () {
+            // continent, country を選択してから
             $continent.val('asia').trigger('change');
             $country.val('japan').trigger('change');
-            // ... and reset continent
+            // continent を非選択状態にする
             $continent.val('').trigger('change');
-
             expect($country.attr('disabled')).toBeTruthy();
             expect($city.attr('disabled')).toBeTruthy();
         });
@@ -66,46 +67,45 @@ $(function () {
     describe('ex3', function() {
         var $cuisine, $food, $alcohol;
 
-        // jquery instances
+        // jquery instances of the select elements
         $cuisine = $('#ex3-cuisine');
         $food = $('#ex3-food');
         $alcohol = $('#ex3-alcohol');
 
-        // narrow the select elements
-        $cuisine.narrows('#ex3-food, #ex3-alcohol');
-
         // 各テストの最初に選択状態を初期化
         beforeEach(function() {
             $cuisine.val('').trigger('change');
+            $food.val('').trigger('change');
+            $alcohol.val('').trigger('change');
         });
 
-        it('both child selects should be disabled initially', function () {
+        it('food, alcohol は初期状態で disabled', function () {
             expect($food.attr('disabled')).toBeTruthy();
             expect($alcohol.attr('disabled')).toBeTruthy();
         });
 
-        it('both child selects should have been narrowed by a value "japanese"', function () {
+        it('cuisine で "japanese" を選択したら food, alcohol 両方とも絞り込まれる', function () {
             // select cuisine
             $cuisine.val('japanese').trigger('change');
-
+            expect($food.find('option').size()).toBeGreaterThan(1);
             $food.find('option').each(function () {
                 if ($(this).val()) {
                     expect($(this).data('ex3-cuisine')).toEqual('japanese');
                 }
             });
-            $food.find('option').each(function () {
+            expect($alcohol.find('option').size()).toBeGreaterThan(1);
+            $alcohol.find('option').each(function () {
                 if ($(this).val()) {
                     expect($(this).data('ex3-cuisine')).toEqual('japanese');
                 }
             });
         });
 
-        it('both child selects should be disabled after selecting null value in the parent select', function () {
+        it('cuisine で value="" を選択したら food, alcohol は disabled', function () {
             // select cuisine
             $cuisine.val('japanese').trigger('change');
             // ... and reset
             $cuisine.val('').trigger('change');
-
             expect($food.attr('disabled')).toBeTruthy();
             expect($alcohol.attr('disabled')).toBeTruthy();
         });
@@ -115,7 +115,7 @@ $(function () {
     describe('ex4', function() {
         var $country, $category, $menu;
 
-        // jquery instances
+        // jquery instances of the select elements
         $country = $('#ex4-country');
         $category = $('#ex4-category');
         $menu = $('#ex4-menu');
@@ -124,31 +124,30 @@ $(function () {
         beforeEach(function() {
             $country.val('').trigger('change');
             $category.val('').trigger('change');
+            $menu.val('').trigger('change');
         });
 
-        it('child select should be disabled initially', function () {
+        it('menu は初期状態で disabled', function () {
             expect($menu.attr('disabled')).toBeTruthy();
         });
 
-        it('child select shouldn\'t be enabled when only country is selected', function () {
+        it('country だけ選択しても menu は disabled のまま', function () {
             // select country
             $country.val('japanese').trigger('change');
-
             expect($menu.attr('disabled')).toBeTruthy();
         });
 
-        it('child select shouldn\'t be enabled when only category is selected', function () {
+        it('category だけ選択しても menu は disabled のまま', function () {
             // select category
             $category.val('food').trigger('change');
-
             expect($menu.attr('disabled')).toBeTruthy();
         });
 
-        it('child select should have been narrowed by both "japanese" and "food"', function () {
+        it('country で "japanese", category で "food" を選択したら menu が絞り込まれる', function () {
             // select country & category
             $country.val('japanese').trigger('change');
             $category.val('food').trigger('change');
-
+            expect($menu.find('option').size()).toBeGreaterThan(1);
             $menu.find('option').each(function () {
                 if ($(this).val()) {
                     expect($(this).data('ex4-country')).toEqual('japanese');
@@ -157,24 +156,37 @@ $(function () {
             });
         });
 
-        it('both child selects should be disabled after selecting null value in the parent select', function () {
-            // select country & category
+        it('country で value="" を選択したら menu は disabled', function () {
+            // 一度両方選択してから
             $country.val('japanese').trigger('change');
             $category.val('food').trigger('change');
-            // ... and reset
+            // country を非選択状態にする
             $country.val('').trigger('change');
+            expect($menu.attr('disabled')).toBeTruthy();
+        });
 
+        it('category で value="" を選択したら menu は disabled', function () {
+            // 一度両方選択してから
+            $country.val('japanese').trigger('change');
+            $category.val('food').trigger('change');
+            // category を非選択状態にする
+            $category.val('').trigger('change');
             expect($menu.attr('disabled')).toBeTruthy();
         });
     });
 
     // (dummy description) reset all selections after the tests
     describe('reset', function() {
-        it('(dummy spec) reset all selections', function () {
+        it('(dummy spec) reset all selects', function () {
             $('#ex2-continent').val('').trigger('change');
+            $('#ex2-country').val('').trigger('change');
+            $('#ex2-city').val('').trigger('change');
             $('#ex3-cuisine').val('').trigger('change');
+            $('#ex3-food').val('').trigger('change');
+            $('#ex3-alcohol').val('').trigger('change');
             $('#ex4-country').val('').trigger('change');
             $('#ex4-category').val('').trigger('change');
+            $('#ex4-menu').val('').trigger('change');
         });
     });
 
