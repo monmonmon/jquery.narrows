@@ -203,7 +203,7 @@
                     var relevant_value = $option.data(parent_id);
                     if (relation.params.allow_multiple_parent_values) {
                         // セパレータ区切りで複数の親にマッチ
-                        var relevant_values = relevant_value.split(relation.params.regexp_separator);
+                        var relevant_values = relevant_value.toString().split(relation.params.regexp_separator);
                         var matched_any = false;
                         for (var r_i = 0, r_len = relevant_values.length; r_i < r_len; r_i++) {
                             if (relevant_values[r_i] == parent_selected_value) {
