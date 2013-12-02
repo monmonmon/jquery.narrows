@@ -9,24 +9,24 @@
     <link rel="stylesheet" type="text/css" href="test/jasmine-1.3.1/jasmine.css">
     <script type="text/javascript" src="test/jasmine-1.3.1/jasmine.js"></script>
     <script type="text/javascript" src="test/jasmine-1.3.1/jasmine-html.js"></script>
-    <script type="text/javascript" src="test/narrowsSpec.js"></script>
+    <script type="text/javascript" src="test/narrowsSpec2.js"></script>
     <script type="text/javascript">
     $(function () {
         // 例1：親→子
-        $("#ex1-category").narrows("#ex1-food");
+        $("#ex1-category").narrows("#ex1-food", {disable_if_parent_is_null: false});
 
         // 例2：親→子→孫
-        $("#ex2-continent").narrows("#ex2-country");
-        $("#ex2-country").narrows("#ex2-city");
+        $("#ex2-continent").narrows("#ex2-country", {disable_if_parent_is_null: false});
+        $("#ex2-country").narrows("#ex2-city", {disable_if_parent_is_null: false});
 
         // 例3：親→子1、子2
-        $("#ex3-cuisine").narrows("#ex3-food, #ex3-alcohol");
+        $("#ex3-cuisine").narrows("#ex3-food, #ex3-alcohol", {disable_if_parent_is_null: false});
         // こうも書ける
         //$("#ex3-cuisine").narrows("#ex3-food");
         //$("#ex3-cuisine").narrows("#ex3-alcohol");
 
         // 例4：親1、親2→子
-        $("#ex4-country, #ex4-category").narrows("#ex4-menu");
+        $("#ex4-country, #ex4-category").narrows("#ex4-menu", {disable_if_parent_is_null: false});
     });
     </script>
   </head>
