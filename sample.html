@@ -21,12 +21,14 @@
 
         // 例3：親→子1、子2
         $("#ex3-cuisine").narrows("#ex3-food, #ex3-alcohol");
-        // こうも書ける
-        //$("#ex3-cuisine").narrows("#ex3-food");
-        //$("#ex3-cuisine").narrows("#ex3-alcohol");
 
         // 例4：親1、親2→子
         $("#ex4-country, #ex4-category").narrows("#ex4-menu");
+
+        // 例5：子selectのoptionが親selectの複数のoptionにマッチ
+        $("#ex5-category").narrows("#ex5-menu", {
+            allow_multiple_parent_values: true
+        });
     });
     </script>
   </head>
@@ -216,6 +218,27 @@
         <option value="bulgogi"    data-ex4-country="korean"   data-ex4-category="food">Bulgogi</option>
         <option value="makgeolli"  data-ex4-country="korean"   data-ex4-category="liquor">Makgeolli</option>
         <option value="sikhye"     data-ex4-country="korean"   data-ex4-category="soft-drink">Sikhye</option>
+      </select>
+    </section>
+
+    <h1>例5</h1>
+    <section>
+      <p>
+        子selectの1つのoptionが、親selectの複数のoptionにマッチ。<br>
+        うどんは食べ物であり飲み物でもあることは周知の事実です。カレーも同様です。
+      </p>
+      <select id="ex5-category">
+        <option value="">-- カテゴリ --</option>
+        <option value="food">食べ物</option>
+        <option value="soft-drink">飲み物</option>
+      </select>
+      <select id="ex5-menu">
+        <option value="">-- メニュー --</option>
+        <option value="sushi"      data-ex5-category="food">寿司</option>
+        <option value="tempura"    data-ex5-category="food">天ぷら</option>
+        <option value="green-tea"  data-ex5-category="soft-drink">お茶</option>
+        <option value="udon"       data-ex5-category="food,soft-drink">うどん</option>
+        <option value="dumpling"   data-ex5-category="food,soft-drink">カレー</option>
       </select>
     </section>
 

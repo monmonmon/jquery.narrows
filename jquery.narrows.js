@@ -19,6 +19,8 @@
         __default_params: {
             disable_if_parent_is_null: true,
             null_value: '',
+            allow_multiple_parent_values: false,
+            multiple_parent_values_separator: ' *, *',
         },
         // 初期化
         init: function (selector, params) {
@@ -30,6 +32,9 @@
             var __params = {};
             for (var key in methods.__default_params) {
                 __params[key] = params && params[key] !== void 0 ? params[key] : methods.__default_params[key];
+            }
+            if (__params.allow_multiple_parent_values) {
+                __params.regexp_separator = new RegExp(__params.multiple_parent_values_separator);
             }
             params = __params;
             // この親子関係を登録
@@ -178,7 +183,7 @@
         },
         // 親selectで選択された値に対応するoptionを有効にする
         enable_relevant_options: function ($select, relation, parent_selected_values) {
-            var previously_selected_child_value = $select.val();
+            var previously_selected_value = $select.val();
             $select
                 // disabled解除
                 .removeAttr('disabled')
@@ -188,19 +193,37 @@
             var all_options = methods.get_all_options_of($select);
             for (var option_i = 0, len = all_options.length; option_i < len; option_i++) {
                 var $option = $(all_options[option_i]);
+                if (!$option.val()) {
+                    continue;
+                }
                 // このoptionが全ての親selectの選択結果にマッチするか確認
                 var relevant_option = true;
                 for (var parent_id in parent_selected_values) {
-                    var parent_value = parent_selected_values[parent_id];
-                    if ($option.data(parent_id) != parent_value) {
-                        relevant_option = false;
-                        break;
+                    var parent_selected_value = parent_selected_values[parent_id];
+                    var relevant_value = $option.data(parent_id);
+                    if (relation.params.allow_multiple_parent_values) {
+                        // セパレータ区切りで複数の親にマッチ
+                        var relevant_values = relevant_value.split(relation.params.regexp_separator);
+                        var matched_any = false;
+                        for (var r_i = 0, r_len = relevant_values.length; r_i < r_len; r_i++) {
+                            if (relevant_values[r_i] == parent_selected_value) {
+                                matched_any = true; break;
+                            }
+                        }
+                        if (!matched_any) {
+                            relevant_option = false; break;
+                        }
+                    } else {
+                        // 単一の親にマッチ
+                        if (relevant_value != parent_selected_value) {
+                            relevant_option = false; break;
+                        }
                     }
                 }
                 if (relevant_option) {
                     // このoptionを子selectに追加
                     // さっきまで選択されてたoptionであればselectedに
-                    if ($option.val() == previously_selected_child_value) {
+                    if ($option.val() == previously_selected_value) {
                         $option.prop('selected', true);
                     }
                     $select.append($option);
