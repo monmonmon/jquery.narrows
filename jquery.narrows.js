@@ -15,24 +15,51 @@
         __relations: {},   // 親子関係を保持する配列
         __options: {},     // 子selectごとにoptionを全て保持
         __ukeys: {},       // selectに与えるユニークキーのリストを保持
-        __ukey_name: 'jquery-narrows-unique-key', // selectに与えるユニークキーの属性名
+        __ukey_name: 'jquery-narrows-unique-key', // select要素に付与するユニークキーの属性名
+        __default_params: {
+            disable_if_parent_is_null: true,
+            null_value: '',
+            allow_multiple_parent_values: false,
+            multiple_parent_values_separator: ' *, *',
+        },
         // 初期化
-        init: function (selector) {
+        init: function (selector, params) {
             var $parents = this;
             var $children = $(selector);
             // 引数チェック
-            methods.check_parameters($parents, $children);
+            methods.validate_selects($parents, $children);
+            // 設定のデフォルト値をオーバーライド
+            var __params = {};
+            for (var key in methods.__default_params) {
+                __params[key] = params && params[key] !== void 0 ? params[key] : methods.__default_params[key];
+            }
+            if (__params.allow_multiple_parent_values) {
+                __params.regexp_separator = new RegExp(__params.multiple_parent_values_separator);
+            }
+            params = __params;
             // この親子関係を登録
-            methods.add_new_relations($parents, $children);
-            // 子selectはとりあえず全てdisable（後で条件次第でenable）
-            $children.attr('disabled', 'disabled');
+            methods.register_new_relations($parents, $children, params);
+            // 子selectはとりあえず全てdisable（直後に適宜enable）
+            if (params.disable_if_parent_is_null) {
+                $children.attr('disabled', 'disabled');
+            }
             // 親selectのイベントハンドラを設定
-            $parents.on('change init', methods.onchange_handler)
-                .trigger('init'); // 初期化イベントをトリガー
+            $parents.on('change', methods.onchange_handler);
+            // 絞り込みを初期化
+            var relations = methods.get_relations_of($parents);
+            for (var relation_i = 0, len = relations.length; relation_i < len; relation_i++) {
+                var relation = relations[relation_i];
+                if (relation.initialized) {
+                    // 初期化は1回だけ
+                    continue;
+                }
+                relation.initialized = true;
+                methods.manage_this_relation(relation);
+            }
             return $parents;
         },
-        // パラメータチェック
-        check_parameters: function ($parents, $children) {
+        // 親子それぞれの select, option が正しく記述されているかをチェック
+        validate_selects: function ($parents, $children) {
             // 親子select共通のチェック
             var arr = [$parents, $children];
             for (var arr_i = 0, len = arr.length; arr_i < len; arr_i++) {
@@ -67,7 +94,7 @@
             });
         },
         // 親子関係を新規登録
-        add_new_relations: function ($parents, $children) {
+        register_new_relations: function ($parents, $children, params) {
             // 親子それぞれの select にランダムなユニークキーを割り当てる
             var parent_keys = [];
             $parents.each(function () {
@@ -89,6 +116,7 @@
                 methods.__relations[parent_key].push({
                     $parents:$parents,
                     $children:$children,
+                    params:params,
                     initialized:false
                 });
             }
@@ -111,72 +139,131 @@
         },
         // 親selectのchangeイベントハンドラ
         onchange_handler: function (e) {
-            var ukey = $(this).data(methods.__ukey_name);
-            var relations = methods.__relations[ukey];
+            var relations = methods.get_relations_of($(this));
             for (var relation_i = 0, len = relations.length; relation_i < len; relation_i++) {
                 var relation = relations[relation_i];
-                if ('init' == e.type && relation.initialized) {
-                    // 何度も初期化しない
-                    continue;
+                methods.manage_this_relation(relation);
+            }
+        },
+        // 親selectで選択された値に基づいて子selectを絞り込む
+        manage_this_relation: function (relation) {
+            // 全ての親selectで選択したvalueを調べる
+            var parent_selected_values = {};
+            var all_parents_selected = true;
+            relation.$parents.each(function () {
+                var value = $(this).val();
+                if (value == relation.params.null_value) {
+                    all_parents_selected = false;
+                    return false;
                 }
-                relation.initialized = true;
-                // 親selectの選択されたvalueを取得
-                var parent_selected_values = {};
-                var all_parents_selected = true;
-                relation.$parents.each(function () {
-                    var value = $(this).val();
-                    if (!value) {
-                        all_parents_selected = false;
-                        return false;
-                    }
-                    parent_selected_values[$(this).attr('id')] = value;
+                parent_selected_values[$(this).attr('id')] = value;
+            });
+            if (all_parents_selected) {
+                // この親子関係の全ての親selectで value="" 以外の値が選択された。
+                // 対応するoptionを子selectに追加
+                relation.$children.each(function () {
+                    methods.enable_relevant_options($(this), relation, parent_selected_values);
                 });
-                if (!all_parents_selected) {
-                    // この親子関係の親selectのどれかで value="" が選択された
-                    // 子selectをdisableして、value="" とする
+            } else {
+                // この親子関係の親selectのどれかで value="" が選択された。
+                if (relation.params.disable_if_parent_is_null) {
+                    // 子selectのoptionを全て削除してdisable
                     relation.$children.each(function () {
-                        $(this)
-                            .attr('disabled', 'disabled').val('')
-                            .find('option[value!=""]').remove();
+                        methods.disable_all_options($(this), relation);
                     });
                 } else {
-                    // この親子関係の全ての親selectで値が選択された
+                    // 子selectのoptionを全部表示
                     relation.$children.each(function () {
-                        $child_select = $(this);
-                        var previously_selected_child_value = $child_select.val();
-                        $child_select
-                        // 子selectのdisabled解除
-                            .removeAttr('disabled')
-                        // 子selectのoption要素をDOMから一旦べしっと削除
-                            .find('option[value!=""]').remove();
-                        // 子selectの全てのoptionのうち、親selectの選択結果に適合するもののみ
-                        // 子selectに追加していく
-                        var ukey = $child_select.data(methods.__ukey_name);
-                        var all_options = methods.__options[ukey];
-                        for (var option_i = 0, len = all_options.length; option_i < len; option_i++) {
-                            var $option = $(all_options[option_i]);
-                            var option_is_suitable = true;
-                            for (var parent_id in parent_selected_values) {
-                                var parent_value = parent_selected_values[parent_id];
-                                if ($option.data(parent_id) != parent_value) {
-                                    option_is_suitable = false;
-                                    break;
-                                }
-                            }
-                            if (option_is_suitable) {
-                                // 全ての親selectの選択結果に適合した。子selectにoptionを追加する
-                                // さっきまで選択されてたoptionであればselectedにしてやる
-                                if ($option.val() == previously_selected_child_value) {
-                                    $option.prop('selected', true);
-                                }
-                                $child_select.append($option);
-                            }
-                        }
+                        methods.enable_all_options($(this), relation);
                     });
                 }
-                // 子孫selectへイベントを伝播
-                relation.$children.trigger(e.type);
             }
+            // 子孫selectへイベントを伝播
+            relation.$children.trigger('change');
+        },
+        // 親selectで選択された値に対応するoptionを有効にする
+        enable_relevant_options: function ($select, relation, parent_selected_values) {
+            var previously_selected_value = $select.val();
+            $select
+                // disabled解除
+                .removeAttr('disabled')
+                // option要素をDOMから一旦べしっと削除
+                .find('option[value!=""]').remove();
+            // 全てのoptionのうち、親selectの選択結果に適合するもののみ追加
+            var all_options = methods.get_all_options_of($select);
+            for (var option_i = 0, len = all_options.length; option_i < len; option_i++) {
+                var $option = $(all_options[option_i]);
+                if (!$option.val()) {
+                    continue;
+                }
+                // このoptionが全ての親selectの選択結果にマッチするか確認
+                var relevant_option = true;
+                for (var parent_id in parent_selected_values) {
+                    var parent_selected_value = parent_selected_values[parent_id];
+                    var relevant_value = $option.data(parent_id);
+                    if (relation.params.allow_multiple_parent_values) {
+                        // セパレータ区切りで複数の親にマッチ
+                        var relevant_values = relevant_value.toString().split(relation.params.regexp_separator);
+                        var matched_any = false;
+                        for (var r_i = 0, r_len = relevant_values.length; r_i < r_len; r_i++) {
+                            if (relevant_values[r_i] == parent_selected_value) {
+                                matched_any = true; break;
+                            }
+                        }
+                        if (!matched_any) {
+                            relevant_option = false; break;
+                        }
+                    } else {
+                        // 単一の親にマッチ
+                        if (relevant_value != parent_selected_value) {
+                            relevant_option = false; break;
+                        }
+                    }
+                }
+                if (relevant_option) {
+                    // このoptionを子selectに追加
+                    // さっきまで選択されてたoptionであればselectedに
+                    if ($option.val() == previously_selected_value) {
+                        $option.prop('selected', true);
+                    }
+                    $select.append($option);
+                }
+            }
+        },
+        // 全てのoptionを有効にする
+        enable_all_options: function ($select, relation) {
+            var previously_selected_child_value = $select.val();
+            $select
+                // disabled解除
+                .removeAttr('disabled')
+                // option要素をDOMから一旦べしっと削除
+                .find('option[value!=""]').remove();
+            // 全てのoptionを追加
+            var all_options = methods.get_all_options_of($select);
+            for (var option_i = 0, len = all_options.length; option_i < len; option_i++) {
+                var $option = $(all_options[option_i]);
+                // さっきまで選択されてたoptionであればselectedに
+                if ($option.val() == previously_selected_child_value) {
+                    $option.prop('selected', true);
+                }
+                $select.append($option);
+            }
+        },
+        // 全てのoptionを無効にする
+        disable_all_options: function ($select, relation) {
+            $select
+                .attr('disabled', 'disabled').val(relation.params.null_value)
+                .find('option[value!=""]').remove();
+        },
+        // $select を親とする全ての親子関係を取得する
+        get_relations_of: function ($select) {
+            var ukey = $select.data(methods.__ukey_name);
+            return methods.__relations[ukey];
+        },
+        // $select の全ての option 要素を返す
+        get_all_options_of: function ($select) {
+            var ukey = $select.data(methods.__ukey_name);
+            return methods.__options[ukey];
         }
     };
     $.fn.narrows = function (method) {
