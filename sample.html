@@ -4,30 +4,36 @@
     <meta charset="utf-8">
     <title>jquery.narrows.js</title>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
     <script src="jquery.narrows.js"></script>
     <!-- jasmine -->
     <link rel="stylesheet" href="lib/jasmine-2.0.0-rc5/jasmine.css">
     <script src="lib/jasmine-2.0.0-rc5/jasmine.js"></script>
     <script src="lib/jasmine-2.0.0-rc5/jasmine-html.js"></script>
     <script src="lib/jasmine-2.0.0-rc5/boot.js"></script>
-    <script src="test/narrowsSpec.js"></script>
+    <script src="spec/narrowsSpec.js"></script>
     <script>
     $(function () {
         // 例1：親→子
-        $("#ex1-category").narrows("#ex1-food");
+        $("#ex1-food-category").narrows("#ex1-food");
 
-        // 例2：親→子→孫
-        $("#ex2-continent").narrows("#ex2-country");
-        $("#ex2-country").narrows("#ex2-city");
+        // 例2：親→子、親selectが未選択の場合、子selectは全てのoptionが選択可能
+        $("#ex2-food-category").narrows("#ex2-food", {
+            disable_if_parent_is_null: false
+        });
 
-        // 例3：親→子1、子2
-        $("#ex3-cuisine").narrows("#ex3-food, #ex3-alcohol");
+        // 例3：親→子→孫
+        $("#ex3-continent").narrows("#ex3-country");
+        $("#ex3-country").narrows("#ex3-city");
 
-        // 例4：親1、親2→子
-        $("#ex4-country, #ex4-category").narrows("#ex4-menu");
+        // 例4：親→子1、子2
+        $("#ex4-cuisine").narrows("#ex4-food, #ex4-alcohol");
 
-        // 例5：子selectのoptionが親selectの複数のoptionにマッチ
-        $("#ex5-category").narrows("#ex5-menu", {
+        // 例5：親1、親2→子
+        $("#ex5-country, #ex5-category").narrows("#ex5-menu");
+
+        // 例6：子selectのoptionが親selectの複数のoptionにマッチ
+        $("#ex6-category").narrows("#ex6-menu", {
             allow_multiple_parent_values: true
         });
     });
@@ -38,7 +44,7 @@
     <h1>例1</h1>
     <section>
       <p>基本的な「親→子」の階層関係</p>
-      <select id="ex1-category">
+      <select id="ex1-food-category">
         <option value="">-- Food Category --</option>
         <option value="meat">Meat</option>
         <option value="vegetable">Vegetable</option>
@@ -46,22 +52,53 @@
       </select>
       <select id="ex1-food">
         <option value="">-- Food --</option>
-        <option value="beef" data-ex1-category="meat">Beef</option>
-        <option value="pork" data-ex1-category="meat">Pork</option>
-        <option value="chicken" data-ex1-category="meat">Chicken</option>
-        <option value="lettuce" data-ex1-category="vegetable">Lettuce</option>
-        <option value="carrot" data-ex1-category="vegetable">Carrot</option>
-        <option value="tomato" data-ex1-category="vegetable">Tomato</option>
-        <option value="apple" data-ex1-category="fruit">Apple</option>
-        <option value="banana" data-ex1-category="fruit">Banana</option>
-        <option value="melon" data-ex1-category="fruit">Melon</option>
+        <option value="beef" data-ex1-food-category="meat">Beef</option>
+        <option value="pork" data-ex1-food-category="meat">Pork</option>
+        <option value="chicken" data-ex1-food-category="meat">Chicken</option>
+        <option value="lettuce" data-ex1-food-category="vegetable">Lettuce</option>
+        <option value="carrot" data-ex1-food-category="vegetable">Carrot</option>
+        <option value="tomato" data-ex1-food-category="vegetable">Tomato</option>
+        <option value="apple" data-ex1-food-category="fruit">Apple</option>
+        <option value="banana" data-ex1-food-category="fruit">Banana</option>
+        <option value="melon" data-ex1-food-category="fruit">Melon</option>
       </select>
+<pre class="prettyprint lang-js">
+$("#ex1-food-category").narrows("#ex1-food");
+</pre>
     </section>
 
     <h1>例2</h1>
     <section>
+      <p>親selectが未選択の場合、子selectは全て選択可能</p>
+      <select id="ex2-food-category">
+        <option value="">-- Food Category --</option>
+        <option value="meat">Meat</option>
+        <option value="vegetable">Vegetable</option>
+        <option value="fruit">Fruit</option>
+      </select>
+      <select id="ex2-food">
+        <option value="">-- Food --</option>
+        <option value="beef" data-ex2-food-category="meat">Beef</option>
+        <option value="pork" data-ex2-food-category="meat">Pork</option>
+        <option value="chicken" data-ex2-food-category="meat">Chicken</option>
+        <option value="lettuce" data-ex2-food-category="vegetable">Lettuce</option>
+        <option value="carrot" data-ex2-food-category="vegetable">Carrot</option>
+        <option value="tomato" data-ex2-food-category="vegetable">Tomato</option>
+        <option value="apple" data-ex2-food-category="fruit">Apple</option>
+        <option value="banana" data-ex2-food-category="fruit">Banana</option>
+        <option value="melon" data-ex2-food-category="fruit">Melon</option>
+      </select>
+<pre class="prettyprint lang-js">
+$("#ex2-food-category").narrows("#ex2-food", {
+    disable_if_parent_is_null: false
+});
+</pre>
+    </section>
+
+    <h1>例3</h1>
+    <section>
       <p>「親→子→孫」の3世代</p>
-      <select id="ex2-continent">
+      <select id="ex3-continent">
         <option value="">-- Continent --</option>
         <option value="africa">Africa</option>
         <option value="asia">Asia</option>
@@ -70,177 +107,207 @@
         <option value="north-america">North America</option>
         <option value="south-america">South America</option>
       </select>
-      <select id="ex2-country">
+      <select id="ex3-country">
         <option value="">-- Country --</option>
-        <option value="south-africa" data-ex2-continent="africa">South Africa</option>
-        <option value="egypt" data-ex2-continent="africa">Egypt</option>
-        <option value="kenia" data-ex2-continent="africa">Kenia</option>
-        <option value="japan" data-ex2-continent="asia">Japan</option>
-        <option value="korea" data-ex2-continent="asia">Korea</option>
-        <option value="china" data-ex2-continent="asia">China</option>
-        <option value="taiwan" data-ex2-continent="asia">Taiwan</option>
-        <option value="vietnam" data-ex2-continent="asia">Vietnam</option>
-        <option value="thailand" data-ex2-continent="asia">Thailand</option>
-        <option value="cambodia" data-ex2-continent="asia">Cambodia</option>
-        <option value="laos" data-ex2-continent="asia">Laos</option>
-        <option value="malaysia" data-ex2-continent="asia">Malaysia</option>
-        <option value="singapore" data-ex2-continent="asia">Singapore</option>
-        <option value="indonesia" data-ex2-continent="asia">Indonesia</option>
-        <option value="philippines" data-ex2-continent="asia">Philippines</option>
-        <option value="uk" data-ex2-continent="europa">UK</option>
-        <option value="spain" data-ex2-continent="europa">Spain</option>
-        <option value="france" data-ex2-continent="europa">France</option>
-        <option value="german" data-ex2-continent="europa">German</option>
-        <option value="italia" data-ex2-continent="europa">Italia</option>
-        <option value="rosia" data-ex2-continent="europa">Rosia</option>
-        <option value="australia" data-ex2-continent="oceania">Australia</option>
-        <option value="new zealand" data-ex2-continent="oceania">New Zealand</option>
-        <option value="fiji" data-ex2-continent="oceania">Fiji</option>
-        <option value="usa" data-ex2-continent="north-america">USA</option>
-        <option value="canada" data-ex2-continent="north-america">Canada</option>
-        <option value="mexico" data-ex2-continent="north-america">Mexico</option>
-        <option value="brasil" data-ex2-continent="south-america">Brasil</option>
-        <option value="argentina" data-ex2-continent="south-america">Argentina</option>
-        <option value="colombia" data-ex2-continent="south-america">Colombia</option>
+        <option value="south-africa" data-ex3-continent="africa">South Africa</option>
+        <option value="egypt" data-ex3-continent="africa">Egypt</option>
+        <option value="kenia" data-ex3-continent="africa">Kenia</option>
+        <option value="japan" data-ex3-continent="asia">Japan</option>
+        <option value="korea" data-ex3-continent="asia">Korea</option>
+        <option value="china" data-ex3-continent="asia">China</option>
+        <option value="taiwan" data-ex3-continent="asia">Taiwan</option>
+        <option value="vietnam" data-ex3-continent="asia">Vietnam</option>
+        <option value="thailand" data-ex3-continent="asia">Thailand</option>
+        <option value="cambodia" data-ex3-continent="asia">Cambodia</option>
+        <option value="laos" data-ex3-continent="asia">Laos</option>
+        <option value="malaysia" data-ex3-continent="asia">Malaysia</option>
+        <option value="singapore" data-ex3-continent="asia">Singapore</option>
+        <option value="indonesia" data-ex3-continent="asia">Indonesia</option>
+        <option value="philippines" data-ex3-continent="asia">Philippines</option>
+        <option value="uk" data-ex3-continent="europa">UK</option>
+        <option value="spain" data-ex3-continent="europa">Spain</option>
+        <option value="france" data-ex3-continent="europa">France</option>
+        <option value="german" data-ex3-continent="europa">German</option>
+        <option value="italia" data-ex3-continent="europa">Italia</option>
+        <option value="rosia" data-ex3-continent="europa">Rosia</option>
+        <option value="australia" data-ex3-continent="oceania">Australia</option>
+        <option value="new zealand" data-ex3-continent="oceania">New Zealand</option>
+        <option value="fiji" data-ex3-continent="oceania">Fiji</option>
+        <option value="usa" data-ex3-continent="north-america">USA</option>
+        <option value="canada" data-ex3-continent="north-america">Canada</option>
+        <option value="mexico" data-ex3-continent="north-america">Mexico</option>
+        <option value="brasil" data-ex3-continent="south-america">Brasil</option>
+        <option value="argentina" data-ex3-continent="south-america">Argentina</option>
+        <option value="colombia" data-ex3-continent="south-america">Colombia</option>
       </select>
-      <select id="ex2-city">
+      <select id="ex3-city">
         <option value="">-- City --</option>
-        <option value="cape-town" data-ex2-country="south-africa">Cape Town</option>
-        <option value="giza" data-ex2-country="egypt">Giza</option>
-        <option value="nairobi" data-ex2-country="kenia">Nairobi</option>
-        <option value="tokyo" data-ex2-country="japan">Tokyo</option>
-        <option value="osaka" data-ex2-country="japan">Osaka</option>
-        <option value="hokkaido" data-ex2-country="japan">Hokkaido</option>
-        <option value="seoul" data-ex2-country="korea">Seoul</option>
-        <option value="busan" data-ex2-country="korea">Busan</option>
-        <option value="peking" data-ex2-country="china">Peking</option>
-        <option value="shanghai" data-ex2-country="china">Shanghai</option>
-        <option value="taipei" data-ex2-country="taiwan">Taipei</option>
-        <option value="tainan" data-ex2-country="taiwan">Tainan</option>
-        <option value="hanoi" data-ex2-country="vietnam">Hanoi</option>
-        <option value="bangkok" data-ex2-country="thailand">Bangkok</option>
-        <option value="phnom-penh" data-ex2-country="cambodia">Phnom Penh</option>
-        <option value="vientiane" data-ex2-country="laos">Vientiane</option>
-        <option value="kuala-lumpur" data-ex2-country="malaysia">Kuala Lumpur</option>
-        <option value="singapore" data-ex2-country="singapore">Singapore</option>
-        <option value="jakarta" data-ex2-country="indonesia">Jakarta</option>
-        <option value="bali" data-ex2-country="indonesia">Bali</option>
-        <option value="manila" data-ex2-country="philippines">Manila</option>
-        <option value="london" data-ex2-country="uk">London</option>
-        <option value="madrid" data-ex2-country="spain">Madrid</option>
-        <option value="paris" data-ex2-country="france">Paris</option>
-        <option value="berlin" data-ex2-country="german">Berlin</option>
-        <option value="roma" data-ex2-country="italia">Roma</option>
-        <option value="moscow" data-ex2-country="rosia">Moscow</option>
-        <option value="canberra" data-ex2-country="australia">Canberra</option>
-        <option value="sydney" data-ex2-country="australia">Sydney</option>
-        <option value="melbourne" data-ex2-country="australia">Melbourne</option>
-        <option value="brisbane" data-ex2-country="australia">Brisbane</option>
-        <option value="adelaide" data-ex2-country="australia">Adelaide</option>
-        <option value="perth" data-ex2-country="australia">Perth</option>
-        <option value="darwin" data-ex2-country="australia">Darwin</option>
-        <option value="cairns" data-ex2-country="australia">Cairns</option>
-        <option value="wellington" data-ex2-country="new-zealand">Wellington</option>
-        <option value="suva" data-ex2-country="fiji">Suva</option>
-        <option value="boston" data-ex2-country="usa">Boston</option>
-        <option value="new york" data-ex2-country="usa">New York</option>
-        <option value="california" data-ex2-country="usa">California</option>
-        <option value="otawa" data-ex2-country="canada">Otawa</option>
-        <option value="mexico city" data-ex2-country="mexico">Mexico City</option>
-        <option value="brasilia" data-ex2-country="brasil">Brasilia</option>
-        <option value="buenos aires" data-ex2-country="argentina">Buenos Aires</option>
-        <option value="bogota" data-ex2-country="colombia">Bogota</option>
+        <option value="cape-town" data-ex3-country="south-africa">Cape Town</option>
+        <option value="giza" data-ex3-country="egypt">Giza</option>
+        <option value="nairobi" data-ex3-country="kenia">Nairobi</option>
+        <option value="tokyo" data-ex3-country="japan">Tokyo</option>
+        <option value="osaka" data-ex3-country="japan">Osaka</option>
+        <option value="hokkaido" data-ex3-country="japan">Hokkaido</option>
+        <option value="seoul" data-ex3-country="korea">Seoul</option>
+        <option value="busan" data-ex3-country="korea">Busan</option>
+        <option value="peking" data-ex3-country="china">Peking</option>
+        <option value="shanghai" data-ex3-country="china">Shanghai</option>
+        <option value="taipei" data-ex3-country="taiwan">Taipei</option>
+        <option value="tainan" data-ex3-country="taiwan">Tainan</option>
+        <option value="hanoi" data-ex3-country="vietnam">Hanoi</option>
+        <option value="bangkok" data-ex3-country="thailand">Bangkok</option>
+        <option value="phnom-penh" data-ex3-country="cambodia">Phnom Penh</option>
+        <option value="vientiane" data-ex3-country="laos">Vientiane</option>
+        <option value="kuala-lumpur" data-ex3-country="malaysia">Kuala Lumpur</option>
+        <option value="singapore" data-ex3-country="singapore">Singapore</option>
+        <option value="jakarta" data-ex3-country="indonesia">Jakarta</option>
+        <option value="bali" data-ex3-country="indonesia">Bali</option>
+        <option value="manila" data-ex3-country="philippines">Manila</option>
+        <option value="london" data-ex3-country="uk">London</option>
+        <option value="madrid" data-ex3-country="spain">Madrid</option>
+        <option value="paris" data-ex3-country="france">Paris</option>
+        <option value="berlin" data-ex3-country="german">Berlin</option>
+        <option value="roma" data-ex3-country="italia">Roma</option>
+        <option value="moscow" data-ex3-country="rosia">Moscow</option>
+        <option value="canberra" data-ex3-country="australia">Canberra</option>
+        <option value="sydney" data-ex3-country="australia">Sydney</option>
+        <option value="melbourne" data-ex3-country="australia">Melbourne</option>
+        <option value="brisbane" data-ex3-country="australia">Brisbane</option>
+        <option value="adelaide" data-ex3-country="australia">Adelaide</option>
+        <option value="perth" data-ex3-country="australia">Perth</option>
+        <option value="darwin" data-ex3-country="australia">Darwin</option>
+        <option value="cairns" data-ex3-country="australia">Cairns</option>
+        <option value="wellington" data-ex3-country="new-zealand">Wellington</option>
+        <option value="suva" data-ex3-country="fiji">Suva</option>
+        <option value="boston" data-ex3-country="usa">Boston</option>
+        <option value="new york" data-ex3-country="usa">New York</option>
+        <option value="california" data-ex3-country="usa">California</option>
+        <option value="otawa" data-ex3-country="canada">Otawa</option>
+        <option value="mexico city" data-ex3-country="mexico">Mexico City</option>
+        <option value="brasilia" data-ex3-country="brasil">Brasilia</option>
+        <option value="buenos aires" data-ex3-country="argentina">Buenos Aires</option>
+        <option value="bogota" data-ex3-country="colombia">Bogota</option>
       </select>
+<pre class="prettyprint lang-js">
+$("#ex3-continent").narrows("#ex3-country");
+$("#ex3-country").narrows("#ex3-city");
+</pre>
     </section>
 
-    <h1>例3</h1>
+    <h1>例4</h1>
     <section>
       <p>「親→子1、子2」<br>1つの親selectの選択結果が複数の子selectの選択肢に同時に影響</p>
-      <select id="ex3-cuisine">
+      <select id="ex4-cuisine">
         <option value="">-- Cuisine --</option>
         <option value="japanese">Japanese</option>
         <option value="chinese">Chinese</option>
         <option value="korean">Korean</option>
       </select>
-      <select id="ex3-food">
+      <select id="ex4-food">
         <option value="">-- Food --</option>
-        <option value="sushi" data-ex3-cuisine="japanese">Sushi</option>
-        <option value="tempura" data-ex3-cuisine="japanese">Tempura</option>
-        <option value="soba-noodle" data-ex3-cuisine="japanese">Soba Noodle</option>
-        <option value="stir-fried-rice" data-ex3-cuisine="chinese">Stir-fried Rice</option>
-        <option value="twice-cooked-pork" data-ex3-cuisine="chinese">Twice Cooked Pork</option>
-        <option value="dumpling" data-ex3-cuisine="chinese">Dumpling</option>
-        <option value="bulgogi" data-ex3-cuisine="korean">Bulgogi</option>
-        <option value="bibimbap" data-ex3-cuisine="korean">Bibimbap</option>
-        <option value="kimchi" data-ex3-cuisine="korean">Kimchi</option>
+        <option value="sushi" data-ex4-cuisine="japanese">Sushi</option>
+        <option value="tempura" data-ex4-cuisine="japanese">Tempura</option>
+        <option value="soba-noodle" data-ex4-cuisine="japanese">Soba Noodle</option>
+        <option value="stir-fried-rice" data-ex4-cuisine="chinese">Stir-fried Rice</option>
+        <option value="twice-cooked-pork" data-ex4-cuisine="chinese">Twice Cooked Pork</option>
+        <option value="dumpling" data-ex4-cuisine="chinese">Dumpling</option>
+        <option value="bulgogi" data-ex4-cuisine="korean">Bulgogi</option>
+        <option value="bibimbap" data-ex4-cuisine="korean">Bibimbap</option>
+        <option value="kimchi" data-ex4-cuisine="korean">Kimchi</option>
       </select>
-      <select id="ex3-alcohol">
+      <select id="ex4-alcohol">
         <option value="">-- Alcohol --</option>
-        <option value="sake" data-ex3-cuisine="japanese">Sake</option>
-        <option value="asahi-beer" data-ex3-cuisine="japanese">Asahi Beer</option>
-        <option value="kirin-beer" data-ex3-cuisine="japanese">Kirin Beer</option>
-        <option value="sapporo-beer" data-ex3-cuisine="japanese">Sapporo Beer</option>
-        <option value="ebisu-beer" data-ex3-cuisine="japanese">Ebisu Beer</option>
-        <option value="huangjiu" data-ex3-cuisine="chinese">Huangjiu</option>
-        <option value="baijiu" data-ex3-cuisine="chinese">Baijiu</option>
-        <option value="tsingtao-beer" data-ex3-cuisine="chinese">Tsingtao Beer</option>
-        <option value="soju" data-ex3-cuisine="korean">Soju</option>
-        <option value="makgeolli" data-ex3-cuisine="korean">Makgeolli</option>
-        <option value="hite-jinro-beer" data-ex3-cuisine="korean">Hite-Jinro Beer</option>
+        <option value="sake" data-ex4-cuisine="japanese">Sake</option>
+        <option value="asahi-beer" data-ex4-cuisine="japanese">Asahi Beer</option>
+        <option value="kirin-beer" data-ex4-cuisine="japanese">Kirin Beer</option>
+        <option value="sapporo-beer" data-ex4-cuisine="japanese">Sapporo Beer</option>
+        <option value="ebisu-beer" data-ex4-cuisine="japanese">Ebisu Beer</option>
+        <option value="huangjiu" data-ex4-cuisine="chinese">Huangjiu</option>
+        <option value="baijiu" data-ex4-cuisine="chinese">Baijiu</option>
+        <option value="tsingtao-beer" data-ex4-cuisine="chinese">Tsingtao Beer</option>
+        <option value="soju" data-ex4-cuisine="korean">Soju</option>
+        <option value="makgeolli" data-ex4-cuisine="korean">Makgeolli</option>
+        <option value="hite-jinro-beer" data-ex4-cuisine="korean">Hite-Jinro Beer</option>
       </select>
+<pre class="prettyprint lang-js">
+$("#ex4-cuisine").narrows("#ex4-food, #ex4-alcohol");
+</pre>
     </section>
 
-    <h1>例4</h1>
+    <h1>例5</h1>
     <section>
       <p>「親1、親2→子」<br>複数の親selectの選択結果が1つの子selectの選択肢に影響。Country と Category 両方を選択して初めて Menu が選択可能になります</p>
-      <select id="ex4-country">
+      <select id="ex5-country">
         <option value="">-- Country --</option>
         <option value="japanese">Japanese</option>
         <option value="chinese">Chinese</option>
         <option value="korean">Korean</option>
       </select>
-      <select id="ex4-category">
+      <select id="ex5-category">
         <option value="">-- Category --</option>
         <option value="food">Food</option>
         <option value="liquor">Liquor</option>
         <option value="soft-drink">Soft Drink</option>
       </select>
-      <select id="ex4-menu">
+      <select id="ex5-menu">
         <option value="">-- Menu --</option>
-        <option value="sushi"      data-ex4-country="japanese" data-ex4-category="food">Sushi</option>
-        <option value="tempura"    data-ex4-country="japanese" data-ex4-category="food">Tempura</option>
-        <option value="udon"       data-ex4-country="japanese" data-ex4-category="food">Udon</option>
-        <option value="sake"       data-ex4-country="japanese" data-ex4-category="liquor">Sake</option>
-        <option value="ebisu-beer" data-ex4-country="japanese" data-ex4-category="liquor">Ebisu Beer</option>
-        <option value="green-tea"  data-ex4-country="japanese" data-ex4-category="soft-drink">Green Tea</option>
-        <option value="dumpling"   data-ex4-country="chinese"  data-ex4-category="food">Dumpling</option>
-        <option value="huangjiu"   data-ex4-country="chinese"  data-ex4-category="liquor">Huangjiu</option>
-        <option value="oolong-tea" data-ex4-country="chinese"  data-ex4-category="soft-drink">Oolong Tea</option>
-        <option value="bulgogi"    data-ex4-country="korean"   data-ex4-category="food">Bulgogi</option>
-        <option value="makgeolli"  data-ex4-country="korean"   data-ex4-category="liquor">Makgeolli</option>
-        <option value="sikhye"     data-ex4-country="korean"   data-ex4-category="soft-drink">Sikhye</option>
+        <option value="sushi"      data-ex5-country="japanese" data-ex5-category="food">Sushi</option>
+        <option value="tempura"    data-ex5-country="japanese" data-ex5-category="food">Tempura</option>
+        <option value="udon"       data-ex5-country="japanese" data-ex5-category="food">Udon</option>
+        <option value="sake"       data-ex5-country="japanese" data-ex5-category="liquor">Sake</option>
+        <option value="ebisu-beer" data-ex5-country="japanese" data-ex5-category="liquor">Ebisu Beer</option>
+        <option value="green-tea"  data-ex5-country="japanese" data-ex5-category="soft-drink">Green Tea</option>
+        <option value="dumpling"   data-ex5-country="chinese"  data-ex5-category="food">Dumpling</option>
+        <option value="huangjiu"   data-ex5-country="chinese"  data-ex5-category="liquor">Huangjiu</option>
+        <option value="oolong-tea" data-ex5-country="chinese"  data-ex5-category="soft-drink">Oolong Tea</option>
+        <option value="bulgogi"    data-ex5-country="korean"   data-ex5-category="food">Bulgogi</option>
+        <option value="makgeolli"  data-ex5-country="korean"   data-ex5-category="liquor">Makgeolli</option>
+        <option value="sikhye"     data-ex5-country="korean"   data-ex5-category="soft-drink">Sikhye</option>
       </select>
+<pre class="prettyprint lang-js">
+$("#ex5-country, #ex5-category").narrows("#ex5-menu");
+</pre>
     </section>
 
-    <h1>例5</h1>
+    <h1>例6</h1>
     <section>
       <p>
         子selectの1つのoptionが、親selectの複数のoptionにマッチ。<br>
-        うどんは食べ物であり飲み物でもあることは周知の事実です。カレーも同様です。
+        うどんやカレーは食べ物ですが、飲み物であると主張する人々もいます。
       </p>
-      <select id="ex5-category">
-        <option value="">-- カテゴリ --</option>
+      <select id="ex6-category">
+        <option value="">-- Food Category --</option>
         <option value="food">食べ物</option>
-        <option value="soft-drink">飲み物</option>
+        <option value="drink">飲み物</option>
       </select>
-      <select id="ex5-menu">
-        <option value="">-- メニュー --</option>
-        <option value="sushi"      data-ex5-category="food">寿司</option>
-        <option value="tempura"    data-ex5-category="food">天ぷら</option>
-        <option value="green-tea"  data-ex5-category="soft-drink">お茶</option>
-        <option value="udon"       data-ex5-category="food,soft-drink">うどん</option>
-        <option value="dumpling"   data-ex5-category="food,soft-drink">カレー</option>
+      <select id="ex6-menu">
+        <option value="">-- Menu --</option>
+        <option value="sushi"     data-ex6-category="food">寿司</option>
+        <option value="tempura"   data-ex6-category="food">天ぷら</option>
+        <option value="green-tea" data-ex6-category="drink">お茶</option>
+        <option value="udon"      data-ex6-category="food,drink">うどん</option>
+        <option value="dumpling"  data-ex6-category="food,drink">カレー</option>
       </select>
+<pre class="prettyprint lang-html">
+&lt;select id="ex6-category"&gt;
+  &lt;option value=""&gt;-- Food Category --&lt;/option&gt;
+  &lt;option value="food"&gt;食べ物&lt;/option&gt;
+  &lt;option value="drink"&gt;飲み物&lt;/option&gt;
+&lt;/select&gt;
+&lt;select id="ex6-menu"&gt;
+  &lt;option value=""&gt;-- Menu --&lt;/option&gt;
+  &lt;option value="sushi"     data-ex6-category="food"&gt;寿司&lt;/option&gt;
+  &lt;option value="tempura"   data-ex6-category="food"&gt;天ぷら&lt;/option&gt;
+  &lt;option value="green-tea" data-ex6-category="drink"&gt;お茶&lt;/option&gt;
+  &lt;option value="udon"      data-ex6-category="food,drink"&gt;うどん&lt;/option&gt;&lt;!-- data-ex6-category に複数のカテゴリを指定 --&gt;
+  &lt;option value="dumpling"  data-ex6-category="food,drink"&gt;カレー&lt;/option&gt;&lt;!-- 同上 --&gt;
+&lt;/select&gt;
+</pre>
+<pre class="prettyprint lang-js">
+$("#ex6-category").narrows("#ex6-menu", {
+    allow_multiple_parent_values: true
+});
+</pre>
     </section>
 
   </body>
