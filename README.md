@@ -6,7 +6,7 @@ https://github.com/monmonmon/jquery.narrows
 
 # jQuery Select Narrowing Plugin<br>（select 絞り込みプラグイン）
 
-* Version: 0.2
+* Version: 0.3
 * Author: Shimon Yamada
 
 ## これはなに？
@@ -25,16 +25,16 @@ https://github.com/monmonmon/jquery.narrows
 * 単純な「親→子」だけでなく、「親→子→孫→ひ孫…」と、何階層でも連鎖させられます。
 国→エリア→都市、とか。
 * 「親→子1＆子2」のように、1つの親 select に複数の子 select を持たせられます。
-* 「親1＆親2→子」のように、複数の親 select の選択結果により子 select の選択肢を絞り込んだり出来ます。
+* 「親1＆親2→子」のように、複数の親 select の選択結果により子 select の選択肢を絞り込んだりできます。
 例えば select1 で色を、select2 で形をそれぞれ選択して、select3 の選択肢を絞り込んだりとか。
-* これらを組み合わせて、いくらでも複雑な階層関係を表現出来ます。出来るはず。あまり複雑な階層関係で実験したことないですけど。。。
+* これらを組み合わせて、いくらでも複雑な階層関係を表現できます。できるはず。あまり複雑な階層関係で実験したことないですけど。。。
 
 ## 制約
 
 * 使用する select（親selectも子selectも）は全て id 属性が必須です。
-* 子 select の option には独自のデータ属性 (data-xx="yy" のような属性) が必要です。
-* select の option を動的に追加・削除するようなコードやプラグインとは併用できないです。
-  階層関係の初期化時に、子 select の option 要素をメモリ中に全てキャッシュしてるためです。
+* 子 select の option には独自のデータ属性 (data-xx="yy" のような属性) を設定する必要があります。
+* select の option を動的に追加・削除しています。このような動作と競合するようなライブラリやスクリプトとは共存できません。
+* optgroup のある select には未対応です。
 
 ## 使い方
 
@@ -232,8 +232,59 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
 	});
 	</script>
 
+## オプション
 
+第2引数にオプションを指定できます。
 
+	$("#parent").narrows("#child", {
+		disable_if_parent_is_null: true,
+		null_value: '',
+		allow_multiple_parent_values: false,
+		multiple_parent_values_separator: ' *, *',
+	});
+
+<table>
+  <tr>
+    <th>オプション</th>
+    <th>型</th>
+    <th>デフォルト値</th>
+    <th>説明</th>
+  </tr>
+  <tr>
+    <td>disable_if_parent_is_null</td>
+    <td>boolean</td>
+    <td>true</td>
+    <td>
+      true ... 親selectで value="" を選択した場合、子selectを選択不可とする。<br>
+      false ... 親selectで value="" を選択した場合、子selectで全てのoptionを選択可とする。
+    </td>
+  </tr>
+  <tr>
+    <td>null_value</td>
+    <td>string</td>
+    <td>''</td>
+    <td>
+      option の value 属性が空値だと判断する値。<br>
+      null_value を 0 とすると value="0" の時に空値と判断する。
+    </td>
+  </tr>
+  <tr>
+    <td>allow_multiple_parent_values</td>
+    <td>boolean</td>
+    <td>false</td>
+    <td>
+      子selectのoptionの data-xx 属性に複数の値を指定することで、親selectの複数のoptionにマッチ可能とする。
+    </td>
+  </tr>
+  <tr>
+    <td>multiple_parent_values_separator</td>
+    <td>string</td>
+    <td>' *, *'</td>
+    <td>
+      allow_multiple_parent_values オプションが true の際、data-xx 属性の複数の値を分割するセパレータ（正規表現）。
+    </td>
+  </tr>
+</table>
 
 ## 対応ブラウザ
 
