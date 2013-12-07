@@ -19,13 +19,18 @@ $(function () {
         });
 
         it('country, city は初期状態で disabled', function () {
-            expect($country.attr('disabled')).toBeTruthy();
-            expect($city.attr('disabled')).toBeTruthy();
+            expect($continent.is(':disabled')).toBe(false);
+            expect($country.is(':disabled')).toBe(true);
+            expect($city.is(':disabled')).toBe(true);
         });
 
         it('continent で "asia" を選択したら country はアジアの国に絞り込まれる', function () {
             // continent を選択
             $continent.val('asia').trigger('change');
+            // countryのdisabled解除、cityはdisabledのまま
+            expect($continent.is(':disabled')).toBe(false);
+            expect($country.is(':disabled')).toBe(false);
+            expect($city.is(':disabled')).toBe(true);
             // value="" を含め絞りこまれたoptionは2つ以上
             expect($country.find('option').size()).toBeGreaterThan(1);
             // option の data-xx 属性が全て "asia"
@@ -34,14 +39,16 @@ $(function () {
                     expect($(this).data('ex2-continent')).toEqual('asia');
                 }
             });
-            // cityはdisabledのまま
-            expect($city.attr('disabled')).toBeTruthy();
         });
 
         it('continent で "asia", country で "japan" を選択したら city は日本の都市に絞り込まれる', function () {
             // continent, country を選択
             $continent.val('asia').trigger('change');
             $country.val('japan').trigger('change');
+            // disabled全て解除
+            expect($continent.is(':disabled')).toBe(false);
+            expect($country.is(':disabled')).toBe(false);
+            expect($city.is(':disabled')).toBe(false);
             // value="" を含め絞りこまれたoptionは2つ以上
             expect($city.find('option').size()).toBeGreaterThan(1);
             // option の data-xx 属性が全て "asia"
@@ -53,13 +60,19 @@ $(function () {
         });
 
         it('continent で value="" を選択したら country, city は disabled', function () {
-            // continent, country を選択してから
+            // continent, country, city を選択してから
             $continent.val('asia').trigger('change');
             $country.val('japan').trigger('change');
+            $city.val('tokyo').trigger('change');
             // continent を非選択状態にする
             $continent.val('').trigger('change');
-            expect($country.attr('disabled')).toBeTruthy();
-            expect($city.attr('disabled')).toBeTruthy();
+            // country, city は disabled
+            expect($continent.is(':disabled')).toBe(false);
+            expect($country.is(':disabled')).toBe(true);
+            expect($city.is(':disabled')).toBe(true);
+            // country, city は value=""
+            expect($country.val()).toBe('');
+            expect($city.val()).toBe('');
         });
     });
 
@@ -80,19 +93,24 @@ $(function () {
         });
 
         it('food, alcohol は初期状態で disabled', function () {
-            expect($food.attr('disabled')).toBeTruthy();
-            expect($alcohol.attr('disabled')).toBeTruthy();
+            expect($cuisine.is(':disabled')).toBe(false);
+            expect($food.is(':disabled')).toBe(true);
+            expect($alcohol.is(':disabled')).toBe(true);
         });
 
         it('cuisine で "japanese" を選択したら food, alcohol 両方とも絞り込まれる', function () {
-            // select cuisine
+            // cuisine で japanese を選択
             $cuisine.val('japanese').trigger('change');
+            // food の disabled が解け、japanese で絞り込まれる
+            expect($food.is(':disabled')).toBe(false);
             expect($food.find('option').size()).toBeGreaterThan(1);
             $food.find('option').each(function () {
                 if ($(this).val()) {
                     expect($(this).data('ex3-cuisine')).toEqual('japanese');
                 }
             });
+            // alcohol の disabled が解け、japanese で絞り込まれる
+            expect($alcohol.is(':disabled')).toBe(false);
             expect($alcohol.find('option').size()).toBeGreaterThan(1);
             $alcohol.find('option').each(function () {
                 if ($(this).val()) {
@@ -106,8 +124,8 @@ $(function () {
             $cuisine.val('japanese').trigger('change');
             // ... and reset
             $cuisine.val('').trigger('change');
-            expect($food.attr('disabled')).toBeTruthy();
-            expect($alcohol.attr('disabled')).toBeTruthy();
+            expect($food.is(':disabled')).toBe(true);
+            expect($alcohol.is(':disabled')).toBe(true);
         });
     });
 
@@ -128,19 +146,21 @@ $(function () {
         });
 
         it('menu は初期状態で disabled', function () {
-            expect($menu.attr('disabled')).toBeTruthy();
+            expect($country.is(':disabled')).toBe(false);
+            expect($category.is(':disabled')).toBe(false);
+            expect($menu.is(':disabled')).toBe(true);
         });
 
         it('country だけ選択しても menu は disabled のまま', function () {
             // select country
             $country.val('japanese').trigger('change');
-            expect($menu.attr('disabled')).toBeTruthy();
+            expect($menu.is(':disabled')).toBe(true);
         });
 
         it('category だけ選択しても menu は disabled のまま', function () {
             // select category
             $category.val('food').trigger('change');
-            expect($menu.attr('disabled')).toBeTruthy();
+            expect($menu.is(':disabled')).toBe(true);
         });
 
         it('country で "japanese", category で "food" を選択したら menu が絞り込まれる', function () {
@@ -162,7 +182,8 @@ $(function () {
             $category.val('food').trigger('change');
             // country を非選択状態にする
             $country.val('').trigger('change');
-            expect($menu.attr('disabled')).toBeTruthy();
+            expect($menu.is(':disabled')).toBe(true);
+            expect($menu.val()).toBe('');
         });
 
         it('category で value="" を選択したら menu は disabled', function () {
@@ -171,13 +192,14 @@ $(function () {
             $category.val('food').trigger('change');
             // category を非選択状態にする
             $category.val('').trigger('change');
-            expect($menu.attr('disabled')).toBeTruthy();
+            expect($menu.is(':disabled')).toBe(true);
+            expect($menu.val()).toBe('');
         });
     });
 
-    // (dummy description) reset all selections after the tests
-    describe('reset', function() {
-        it('(dummy spec) reset all selects', function () {
+    // (dummy spec) reset all selections after the tests
+    describe('(dummy spec)', function() {
+        it('reset all selects', function () {
             $('#ex2-continent').val('').trigger('change');
             $('#ex2-country').val('').trigger('change');
             $('#ex2-city').val('').trigger('change');
@@ -189,15 +211,4 @@ $(function () {
             $('#ex4-menu').val('').trigger('change');
         });
     });
-
-    //------------------------------
-    // run all tests
-    var jasmineEnv = jasmine.getEnv();
-    jasmineEnv.updateInterval = 1000;
-    var htmlReporter = new jasmine.HtmlReporter();
-    jasmineEnv.addReporter(htmlReporter);
-    jasmineEnv.specFilter = function(spec) {
-        return htmlReporter.specFilter(spec);
-    };
-    jasmineEnv.execute();
 });
