@@ -262,7 +262,7 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
   <tr>
     <td>null_value</td>
     <td>string</td>
-    <td>''</td>
+    <td>""</td>
     <td>
       option の value 属性が空値だと判断する値。<br>
       null_value を 0 とすると value="0" の時に空値と判断する。
@@ -279,7 +279,7 @@ jQuery プラグインで階層関係を登録します。以下のように呼�
   <tr>
     <td>multiple_parent_values_separator</td>
     <td>string</td>
-    <td>' *, *'</td>
+    <td>" *, *"</td>
     <td>
       allow_multiple_parent_values オプションが true の際、data-xx 属性の複数の値を分割するセパレータ（正規表現）。
     </td>
