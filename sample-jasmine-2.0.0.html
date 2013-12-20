@@ -7,37 +7,11 @@
     <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
     <script src="jquery.narrows.js"></script>
     <!-- jasmine -->
-    <link rel="stylesheet" href="lib/jasmine-1.3.1/jasmine.css">
-    <script src="lib/jasmine-1.3.1/jasmine.js"></script>
-    <script src="lib/jasmine-1.3.1/jasmine-html.js"></script>
-    <script>
-    // boot the jasmine (copied from jasmine-standalone-1.3.1/SpecRunner.html)
-    (function() {
-        var jasmineEnv = jasmine.getEnv();
-        jasmineEnv.updateInterval = 1000;
-
-        var htmlReporter = new jasmine.HtmlReporter();
-
-        jasmineEnv.addReporter(htmlReporter);
-
-        jasmineEnv.specFilter = function(spec) {
-            return htmlReporter.specFilter(spec);
-        };
-
-        var currentWindowOnload = window.onload;
-
-        window.onload = function() {
-            if (currentWindowOnload) {
-                currentWindowOnload();
-            }
-            execJasmine();
-        };
-
-        function execJasmine() {
-            jasmineEnv.execute();
-        }
-    })();
-    </script>
+    <link rel="stylesheet" href="lib/jasmine-2.0.0/jasmine.css">
+    <script src="lib/jasmine-2.0.0/jasmine.js"></script>
+    <script src="lib/jasmine-2.0.0/jasmine-html.js"></script>
+    <script src="lib/jasmine-2.0.0/boot.js"></script>
+    <script src="spec/narrowsSpec.js"></script>
     <script>
     $(function () {
         // 例1：親→子
@@ -64,20 +38,6 @@
         });
     });
     </script>
-    <script src="spec/narrowsSpec.js"></script>
-    <!-- grunt + jasmine -->
-    <script src="./.grunt/grunt-contrib-jasmine/reporter.js"></script>
-
-<style>
-/* jasmineテスト結果を画面一番上に表示 */
-#HTMLReporter {
-  position: absolute;
-  top: 0px;
-  width: 100%;
-  background-color: white;
-}
-</style>
-
   </head>
   <body>
 
