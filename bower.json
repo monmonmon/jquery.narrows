@@ -1,0 +1,17 @@
+{
+  "name": "jquery.narrows.js",
+  "version": "0.3.1",
+  "main": "jquery.narrows.js",
+  "description": "jQuery Hierselect Plugin",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "**/*.html",
+    "Gruntfile.coffee",
+    "node_modules",
+    "README.md",
+    "package.json",
+    "lib",
+    "spec"
+  ]
+}
