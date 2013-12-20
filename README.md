@@ -1,12 +1,6 @@
-<!--
-(remove-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-https://github.com/monmonmon/jquery.narrows
--->
-
 # jQuery Select Narrowing Plugin<br>（select 絞り込みプラグイン）
 
-* Version: 0.3
+* Version: 0.3.1
 * Author: Shimon Yamada
 
 ## これはなに？
