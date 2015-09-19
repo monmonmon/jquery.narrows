@@ -11,6 +11,8 @@ module.exports = (grunt) ->
             options:
                 template: 'sample.html'
         uglify:
+            options:
+                preserveComments: 'some'
             dest:
                 files:
                     'jquery.narrows.min.js': 'jquery.narrows.js'
